@@ -1,5 +1,24 @@
+const crypto = require('crypto');
+
 console.log("====================================");
 
+const NUM_REQ = 4; // use 2, 4, 8 and see the difference
+
+const tic = performance.now();
+
+for (let i = 0; i < NUM_REQ; i++) {
+  const tic = performance.now();
+  // crypto.pbkdf2Sync('secret', 'salt', 300000, 512, 'sha512');
+  crypto.pbkdf2('secret', 'salt', 300000, 512, 'sha512', () => {
+    const tok = performance.now();
+    console.log(tic);
+    console.log(tok);
+    console.log(`inside tictok ${tok - tic} ms`);
+  });
+}
+
+const tok = performance.now();
+console.log(`outside tic tok ${tok - tic} ms`);
 
 // function febonacci(n) {
 //   return (

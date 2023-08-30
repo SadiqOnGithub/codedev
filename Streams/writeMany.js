@@ -27,7 +27,7 @@
 });
 
 
-const fs = require("node:fs/promises");
+// const fs = require("node:fs/promises");
 
 (async () => {
   console.time("writeMany");
@@ -40,7 +40,7 @@ const fs = require("node:fs/promises");
     await fileHandle.write(`${i}\n`);
   }
   console.timeEnd("writeMany");
-})();
+});
 
 
 
@@ -62,9 +62,9 @@ const fs = require("node:fs/promises");
 
 
 
-// const fs = require('fs/promises');
-// const fsSync = require('fs');
-// const path = require('path');
+const fs = require('fs/promises');
+const fsSync = require('fs');
+const path = require('path');
 
 
 (async () => {
@@ -73,11 +73,23 @@ const fs = require("node:fs/promises");
   const fileHandle = await fs.open(filePath, 'w');
   const stream = fileHandle.createWriteStream();
 
-  for (let i = 0; i < 500 * 1000; i++) {
-    // for 500*1000 ittiration
-    // Execution time 350ms-450ms;
-    // RAM 130mb
-    stream.write(`${i}\n`);
-  }
+  console.log(stream.writableHighWaterMark)
+  console.log(stream.writableLength)
+
+  // this shoots the memory
+  // console.log(stream.write(Buffer.alloc(100 * 1000 * 1000, 'a')))
+  
+  // returns false because buffer is not full
+  console.log(stream.write(Buffer.alloc(16383, 'a')))
+  
+  console.log(stream.writableLength)
+  
+  // for (let i = 0; i < 500 * 1000; i++) {
+  //   // for 500*1000 ittiration
+  //   // Execution time 350ms-450ms;
+  //   // RAM 130mb
+  //   stream.write(`${i}\n`);
+  // }
+  fileHandle.close()
   console.timeEnd('writeMany');
-});
+})();

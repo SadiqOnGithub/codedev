@@ -73,23 +73,34 @@ const path = require('path');
   const fileHandle = await fs.open(filePath, 'w');
   const stream = fileHandle.createWriteStream();
 
-  console.log(stream.writableHighWaterMark)
-  console.log(stream.writableLength)
-
+  console.log(stream.writableHighWaterMark);
+  console.log(stream.writableLength);
+  
   // this shoots the memory
   // console.log(stream.write(Buffer.alloc(100 * 1000 * 1000, 'a')))
-  
+
   // returns false because buffer is not full
-  console.log(stream.write(Buffer.alloc(16383, 'a')))
-  
-  console.log(stream.writableLength)
-  
+  console.log(stream.write(Buffer.alloc(16380, 'a')))
+  console.log(stream.write(Buffer.alloc(1)))
+  console.log(stream.write(Buffer.alloc(1)))
+  console.log(stream.write(Buffer.alloc(1)))
+  console.log(stream.write(Buffer.alloc(1)))
+  stream.on('drain', () => {
+    console.log(stream.write(Buffer.alloc(16383, 'a')))
+
+    // this will lead to infinite loop
+    // console.log(stream.write(Buffer.alloc(1)))
+    console.log(stream.writableLength);
+    console.log("we are safe to write more")
+  })
+
   // for (let i = 0; i < 500 * 1000; i++) {
   //   // for 500*1000 ittiration
   //   // Execution time 350ms-450ms;
   //   // RAM 130mb
   //   stream.write(`${i}\n`);
   // }
-  fileHandle.close()
+  console.log(stream.writableLength);
+  // fileHandle.close();
   console.timeEnd('writeMany');
 })();
